@@ -837,7 +837,7 @@ int64 static GetBlockValue(int nHeight, int64 nFees)
     return nSubsidy + nFees;
 }
 
-static const int64 nTargetTimespan = 24 * 60 * 60; // CHNCoin: 24 hours
+static const int64 nTargetTimespan = 10 * 60; // CHNCoin: retarget every 10min
 static const int64 nTargetSpacing = 60; // CHNCoin: 60 seconds
 
 //
@@ -874,7 +874,7 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
         return nProofOfWorkLimit;
 
     // CHNCoin difficulty adjustment protocol switch
-    static const int nDifficultySwitchHeight = 60500;
+    static const int nDifficultySwitchHeight = 59800;
     int nHeight = pindexLast->nHeight + 1;
     bool fNewDifficultyProtocol = (nHeight >= nDifficultySwitchHeight || fTestNet);
 
@@ -919,8 +919,8 @@ unsigned int static GetNextWorkRequired(const CBlockIndex* pindexLast, const CBl
     // Limit adjustment step to 150% (400% before protocol switch)
     int64 nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
     printf("  nActualTimespan = %"PRI64d"  before bounds\n", nActualTimespan);
-    int64 nActualTimespanMax = fNewDifficultyProtocol? ((nTargetTimespanCurrent*3)/2) : (nTargetTimespanCurrent*4);
-    int64 nActualTimespanMin = fNewDifficultyProtocol? ((nTargetTimespanCurrent*2)/3) : (nTargetTimespanCurrent/4);
+    int64 nActualTimespanMax = fNewDifficultyProtocol? ((nTargetTimespanCurrent*99)/90) : (nTargetTimespanCurrent*4);
+    int64 nActualTimespanMin = fNewDifficultyProtocol? ((nTargetTimespanCurrent*90)/99) : (nTargetTimespanCurrent/4);
     if (nActualTimespan < nActualTimespanMin)
         nActualTimespan = nActualTimespanMin;
     if (nActualTimespan > nActualTimespanMax)
